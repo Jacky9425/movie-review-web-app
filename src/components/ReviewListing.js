@@ -51,7 +51,9 @@ function ReviewListing(props) {
                   <Field label={"Release date"} value={item.screening_date} />
                   <Field
                     label={"Rating"}
-                    customRender={<Rate allowHalf value={item.rating} />}
+                    customRender={
+                      <Rate allowHalf disabled value={item.rating} />
+                    }
                   />
                   <Field
                     label={"Casting"}

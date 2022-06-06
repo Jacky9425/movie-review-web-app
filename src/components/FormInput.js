@@ -4,20 +4,19 @@ import { Input, Typography } from "antd";
 const { Text } = Typography;
 
 function FormInput(props) {
-  const { label, type, customLabel, customRender, inputProps } = props;
+  const { label, type, customLabel, customRender, rightLabel } = props;
 
   const RenderForm = () => {
-    switch (type) {
-      case "input":
-        return <Input {...inputProps} />;
-      default:
-        return null;
-    }
+    return <Input {...props} />;
   };
 
   return (
     <div style={styles.container}>
-      {customLabel || <Text>{label}</Text>}
+      <div style={styles.labelContainer}>
+        {customLabel || <Text>{label}</Text>}
+
+        {rightLabel}
+      </div>
 
       {customRender || RenderForm()}
     </div>
@@ -27,6 +26,14 @@ function FormInput(props) {
 export default FormInput;
 
 const styles = {
-  display: "flex",
-  flexDirection: "column",
+  container: {
+    display: "flex",
+    flexDirection: "column",
+    marginBottom: 15,
+  },
+  labelContainer: {
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+  },
 };

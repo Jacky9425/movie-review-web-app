@@ -1,12 +1,18 @@
 import { Button } from "antd";
-import React from "react";
+import React, { useEffect } from "react";
 import "antd/dist/antd.css";
 import { useAppContext } from "../../contexts/appContext";
-import AddReview from "../../components/AddReviewModal";
+import AddReview from "../../components/AddReview";
 import ReviewListing from "../../components/ReviewListing";
+import { reviewData } from "../../data";
 
 function MainApp(props) {
-  const { setModalVisible } = useAppContext();
+  const { setReviews } = useAppContext();
+
+  useEffect(() => {
+    setReviews(reviewData);
+    localStorage.setItem("reviewLists", JSON.stringify(reviewData));
+  }, []);
 
   return (
     <div style={styles.container}>
