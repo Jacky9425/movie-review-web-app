@@ -9,16 +9,18 @@ import { reviewData } from "../../data";
 const { Text } = Typography;
 
 function MainApp(props) {
-  const { setReviews, modalVisible, resetForm } = useAppContext();
+  const { setReviews, modalVisible, resetForm, setIsEdit } = useAppContext();
 
   useEffect(() => {
-    setReviews(reviewData);
-    localStorage.setItem("reviewLists", JSON.stringify(reviewData));
+    let list = JSON.parse(localStorage.getItem("reviewLists"));
+
+    setReviews(list);
   }, []);
 
   useEffect(() => {
     if (modalVisible) return;
     resetForm();
+    setIsEdit(false);
   }, [modalVisible]);
 
   return (

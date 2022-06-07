@@ -11,17 +11,73 @@ import ArrayItemManage from "./ArrayItemManage";
 import TextArea from "antd/lib/input/TextArea";
 import moment from "moment";
 
+const tips = {
+  name: "Movie title",
+  poster: "Movie poster",
+  screeningDate: "The date the movie is released.",
+  cast: "The castings of the movie",
+  rating: "Rate the movie, 1 star being close to worst and 5 star being great",
+  comments: "Comments on the movie",
+};
+
 const { Search } = Input;
+
+function PosterUpload(props) {
+  const {} = props;
+  const { formObject, onChangeFormObject } = useAppContext();
+
+  return (
+    <div
+      style={{
+        ...styles.flex("column"),
+      }}
+    >
+      <Upload
+        accept=".jpg, .jpeg, .png"
+        showUploadList={false}
+        onChange={(e) => {
+          onChangeFormObject(
+            "poster",
+            URL.createObjectURL(e.file.originFileObj)
+          );
+        }}
+      >
+        <Button style={styles.uploadBtn}>Attach Image</Button>
+      </Upload>
+
+      {Object.keys(formObject["poster"]).length > 0 && (
+        <div
+          style={{
+            ...styles.flex("flex"),
+            flexDirection: "column",
+            marginTop: 10,
+          }}
+        >
+          <img
+            src={formObject["poster"].url || formObject["poster"]}
+            width={"120vw"}
+          />
+        </div>
+      )}
+    </div>
+  );
+}
 
 function AddReview(props) {
   const {
     formObject,
-    setModalVisible,
     modalVisible,
+    isEdit,
+    buttonLoading,
+    setModalVisible,
     onSearchMovie,
     onChangeFormObject,
     onChangeCastDetails,
+    onAddReview,
+    onEditReview,
   } = useAppContext();
+
+  console.log(useAppContext());
 
   const FieldTip = ({ tip }) => {
     return (
@@ -58,6 +114,8 @@ function AddReview(props) {
         visible={modalVisible}
         centered
         onCancel={() => setModalVisible(false)}
+        onOk={isEdit ? onEditReview : onAddReview}
+        okButtonProps={{ loading: buttonLoading }}
       >
         <div
           style={{
@@ -68,54 +126,20 @@ function AddReview(props) {
         >
           <FormInput
             label={"Name"}
-            rightLabel={<FieldTip tip={"Movie title"} />}
+            rightLabel={<FieldTip tip={tips.name} />}
             value={formObject["name"]}
             onChange={(e) => onChangeFormObject("name", e.target.value)}
           />
 
           <FormInput
             label={"Poster"}
-            rightLabel={<FieldTip tip={"Movie Poster"} />}
-            customRender={
-              <div
-                style={{
-                  ...styles.flex("column"),
-                }}
-              >
-                <Upload
-                  accept=".jpg, .jpeg, .png"
-                  showUploadList={false}
-                  onChange={(e) => {
-                    onChangeFormObject("poster", {
-                      ...e.file,
-                      url: URL.createObjectURL(e.file.originFileObj),
-                    });
-                  }}
-                >
-                  <Button style={styles.uploadBtn}>Attach Image</Button>
-                </Upload>
-
-                {Object.keys(formObject["poster"]).length > 0 && (
-                  <div
-                    style={{
-                      ...styles.flex("flex"),
-                      flexDirection: "column",
-                      marginTop: 10,
-                    }}
-                  >
-                    <img
-                      src={formObject["poster"].url || formObject["poster"]}
-                      width={"120vw"}
-                    />
-                  </div>
-                )}
-              </div>
-            }
+            rightLabel={<FieldTip tip={tips.poster} />}
+            customRender={<PosterUpload />}
           />
 
           <FormInput
             label={"Screening Date"}
-            rightLabel={<FieldTip tip={"The date the movie is released"} />}
+            rightLabel={<FieldTip tip={tips.screeningDate} />}
             customRender={
               <DatePicker
                 format={"DD MMM YYYY"}
@@ -132,7 +156,7 @@ function AddReview(props) {
 
           <FormInput
             label={"Cast"}
-            rightLabel={<FieldTip tip={"The casting of the movie"} />}
+            rightLabel={<FieldTip tip={tips.cast} />}
             customRender={
               <ArrayItemManage
                 array={formObject["cast"]}
@@ -153,19 +177,20 @@ function AddReview(props) {
 
           <FormInput
             label={"Rating"}
-            rightLabel={
-              <FieldTip
-                tip={
-                  "Rate the movie, 1 star being close to worst and 5 star being great"
-                }
+            rightLabel={<FieldTip tip={tips.rating} />}
+            customRender={
+              <Rate
+                allowHalf
+                allowClear
+                value={formObject["rating"]}
+                onChange={(e) => onChangeFormObject("rating", e)}
               />
             }
-            customRender={<Rate allowHalf allowClear />}
           />
 
           <FormInput
             label={"Comment"}
-            rightLabel={<FieldTip tip={"Comments on the movie"} />}
+            rightLabel={<FieldTip tip={tips.comments} />}
             customRender={
               <TextArea
                 rows={4}

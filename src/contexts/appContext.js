@@ -6,6 +6,7 @@ const defaultFormObject = {
   name: "",
   poster: {},
   screening_date: moment().format("DD MMM YYYY"),
+  date_of_review: moment().format("DD MMM YYYY"),
   cast: [{ actor: "", character: "" }],
   rating: 0,
   description: "",
@@ -23,6 +24,8 @@ function AppContextProvider(props) {
   const [formObject, setFormObject] = useState({
     ...defaultFormObject,
   });
+  const [isEdit, setIsEdit] = useState(false);
+  const [buttonLoading, setButtonLoading] = useState(false);
 
   const onSearchMovie = (e) => {
     if (e) {
@@ -35,7 +38,6 @@ function AppContextProvider(props) {
   };
 
   const onChangeFormObject = (key, value) => {
-    console.log(key, value);
     setFormObject((prev) => {
       return {
         ...prev,
@@ -67,6 +69,7 @@ function AppContextProvider(props) {
 
     temp.splice(index, 1);
 
+    localStorage.setItem("reviewLists", JSON.stringify(temp));
     setReviews(temp);
   };
 
@@ -74,10 +77,48 @@ function AppContextProvider(props) {
     setFormObject(defaultFormObject);
   };
 
+  const onAddReview = () => {
+    let defaultList = [...reviews];
+
+    setModalVisible(false);
+    localStorage.setItem(
+      "reviewLists",
+      JSON.stringify([
+        ...defaultList,
+        { id: defaultList.length + 1, ...formObject },
+      ])
+    );
+    setReviews((prev) => {
+      return [...prev, { id: defaultList.length + 1, ...formObject }];
+    });
+  };
+
+  const onEditReview = () => {
+    setButtonLoading(true);
+
+    let editId = formObject.id;
+
+    let index = reviews.findIndex((i) => i.id === editId);
+
+    let temp = [...reviews];
+    temp.splice(index, 1, formObject);
+
+    setTimeout(() => {
+      setModalVisible(false);
+      setButtonLoading(false);
+      setReviews(temp);
+      localStorage.setItem("reviewLists", JSON.stringify(temp));
+    }, 3000);
+  };
+
   let data = {
     modalVisible,
     reviews,
     formObject,
+    isEdit,
+    buttonLoading,
+    setButtonLoading,
+    setIsEdit,
     onChangeCastDetails,
     onChangeFormObject,
     setFormObject,
@@ -87,6 +128,8 @@ function AppContextProvider(props) {
     resetForm,
     setForm,
     deleteReview,
+    onAddReview,
+    onEditReview,
   };
 
   return <AppContext.Provider value={data}>{children}</AppContext.Provider>;

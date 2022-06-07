@@ -32,7 +32,7 @@ function Field(props) {
 }
 
 function ReviewListing(props) {
-  const { reviews, setForm, deleteReview } = useAppContext();
+  const { reviews, setForm, deleteReview, setIsEdit } = useAppContext();
 
   return (
     <div style={styles.container}>
@@ -65,7 +65,8 @@ function ReviewListing(props) {
                               <Text strong>{cast.actor}</Text> as{" "}
                               <Text strong style={{ color: "#93C4F7" }}>
                                 {cast.character}
-                              </Text>
+                              </Text>{" "}
+                              {index2 !== item.cast.length - 1 ? "," : ""}
                             </Text>
                           );
                         })}
@@ -93,6 +94,7 @@ function ReviewListing(props) {
                       style={styles.actionButton}
                       icon={<EditOutlined />}
                       onClick={() => {
+                        setIsEdit(true);
                         setForm(item);
                       }}
                     >
