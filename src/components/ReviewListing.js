@@ -32,16 +32,16 @@ function Field(props) {
 }
 
 function ReviewListing(props) {
-  const { reviews } = useAppContext();
+  const { reviews, setForm, deleteReview } = useAppContext();
 
   return (
     <div style={styles.container}>
-      {reviews.map((item) => {
+      {reviews.map((item, index) => {
         return (
           <Wrapper key={item.id}>
             <div style={styles.contentContainer}>
               {/* poster */}
-              <img src={item.image_path} width={"290vw"} />
+              <img src={item.poster} width={"290vw"} />
 
               {/* content */}
               <div style={styles.reviewContainer}>
@@ -92,6 +92,9 @@ function ReviewListing(props) {
                       className="edit-button"
                       style={styles.actionButton}
                       icon={<EditOutlined />}
+                      onClick={() => {
+                        setForm(item);
+                      }}
                     >
                       Edit
                     </Button>
@@ -101,6 +104,7 @@ function ReviewListing(props) {
                       danger
                       style={styles.actionButton}
                       icon={<DeleteOutlined />}
+                      onClick={() => deleteReview(index)}
                     >
                       Delete
                     </Button>

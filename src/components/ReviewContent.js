@@ -4,7 +4,7 @@ function ReviewContent(props) {
   const { item } = props;
 
   const Poster = () => {
-    return <img src={item.image_path} width={"290vw"} />;
+    return <img src={item.poster} width={"290vw"} />;
   };
 
   return (

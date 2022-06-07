@@ -1,5 +1,15 @@
 import React, { useState } from "react";
 import { reviewData } from "../data";
+import moment from "moment";
+
+const defaultFormObject = {
+  name: "",
+  poster: {},
+  screening_date: moment().format("DD MMM YYYY"),
+  cast: [{ actor: "", character: "" }],
+  rating: 0,
+  description: "",
+};
 
 const AppContext = React.createContext(null);
 
@@ -11,12 +21,7 @@ function AppContextProvider(props) {
   const [modalVisible, setModalVisible] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [formObject, setFormObject] = useState({
-    name: "",
-    poster: "",
-    screening_date: "",
-    cast: [{ actor: "", character: "" }],
-    rating: 0,
-    description: "",
+    ...defaultFormObject,
   });
 
   const onSearchMovie = (e) => {
@@ -40,7 +45,7 @@ function AppContextProvider(props) {
   };
 
   const onChangeCastDetails = (index, key, value) => {
-    let temp = formObject.cast;
+    let temp = [...formObject.cast];
 
     temp[index][key] = value;
 
@@ -50,6 +55,23 @@ function AppContextProvider(props) {
       ...prev,
       cast: temp,
     }));
+  };
+
+  const setForm = (item) => {
+    setModalVisible(true);
+    setFormObject(item);
+  };
+
+  const deleteReview = (index) => {
+    let temp = [...reviews]; // needed
+
+    temp.splice(index, 1);
+
+    setReviews(temp);
+  };
+
+  const resetForm = () => {
+    setFormObject(defaultFormObject);
   };
 
   let data = {
@@ -62,6 +84,9 @@ function AppContextProvider(props) {
     setModalVisible,
     onSearchMovie,
     setReviews,
+    resetForm,
+    setForm,
+    deleteReview,
   };
 
   return <AppContext.Provider value={data}>{children}</AppContext.Provider>;

@@ -1,5 +1,5 @@
-import { Button, Modal, Input, Tooltip, DatePicker, Rate } from "antd";
-import React, { useEffect } from "react";
+import { Button, Modal, Input, Tooltip, DatePicker, Rate, Upload } from "antd";
+import React from "react";
 import { useAppContext } from "../contexts/appContext";
 import {
   PlusCircleOutlined,
@@ -9,47 +9,9 @@ import {
 import FormInput from "./FormInput";
 import ArrayItemManage from "./ArrayItemManage";
 import TextArea from "antd/lib/input/TextArea";
+import moment from "moment";
 
 const { Search } = Input;
-
-const form_fields = [
-  {
-    name: "Name",
-    tip: "Movie title",
-    key: "name",
-    type: "input",
-  },
-  {
-    name: "Poster",
-    tip: "Movie poster",
-    key: "poster",
-    type: "upload",
-  },
-  {
-    name: "Screening date",
-    tip: "The date the movie is released",
-    key: "screening_date",
-    type: "date_picker",
-  },
-  {
-    name: "Cast",
-    tip: "Casting of the movie",
-    key: "cast",
-    type: "custom",
-  },
-  {
-    name: "Rating",
-    tip: "Rate the movie, 1 star being close to worst and 5 star being great",
-    key: "rating",
-    type: "rating",
-  },
-  {
-    name: "Comments",
-    tip: "Comments on the movie",
-    key: "description",
-    type: "textarea",
-  },
-];
 
 function AddReview(props) {
   const {
@@ -60,8 +22,6 @@ function AddReview(props) {
     onChangeFormObject,
     onChangeCastDetails,
   } = useAppContext();
-
-  useEffect(() => console.log(formObject), [JSON.stringify(formObject)]);
 
   const FieldTip = ({ tip }) => {
     return (
@@ -93,12 +53,19 @@ function AddReview(props) {
 
       <Modal
         title={"New Movie Review"}
+        width={"30%"}
         maskClosable={false}
         visible={modalVisible}
         centered
         onCancel={() => setModalVisible(false)}
       >
-        <div style={styles.flex("column")}>
+        <div
+          style={{
+            ...styles.flex("column"),
+            height: "60vh",
+            overflowY: "auto",
+          }}
+        >
           <FormInput
             label={"Name"}
             rightLabel={<FieldTip tip={"Movie title"} />}
@@ -109,13 +76,58 @@ function AddReview(props) {
           <FormInput
             label={"Poster"}
             rightLabel={<FieldTip tip={"Movie Poster"} />}
-            customRender={<div>custom</div>}
+            customRender={
+              <div
+                style={{
+                  ...styles.flex("column"),
+                }}
+              >
+                <Upload
+                  accept=".jpg, .jpeg, .png"
+                  showUploadList={false}
+                  onChange={(e) => {
+                    onChangeFormObject("poster", {
+                      ...e.file,
+                      url: URL.createObjectURL(e.file.originFileObj),
+                    });
+                  }}
+                >
+                  <Button style={styles.uploadBtn}>Attach Image</Button>
+                </Upload>
+
+                {Object.keys(formObject["poster"]).length > 0 && (
+                  <div
+                    style={{
+                      ...styles.flex("flex"),
+                      flexDirection: "column",
+                      marginTop: 10,
+                    }}
+                  >
+                    <img
+                      src={formObject["poster"].url || formObject["poster"]}
+                      width={"120vw"}
+                    />
+                  </div>
+                )}
+              </div>
+            }
           />
 
           <FormInput
             label={"Screening Date"}
             rightLabel={<FieldTip tip={"The date the movie is released"} />}
-            customRender={<DatePicker {...props} />}
+            customRender={
+              <DatePicker
+                format={"DD MMM YYYY"}
+                value={moment(formObject["screening_date"], "DD MMM YYYY")}
+                onChange={(e) =>
+                  onChangeFormObject(
+                    "screening_date",
+                    moment(e).format("DD MMM YYYY")
+                  )
+                }
+              />
+            }
           />
 
           <FormInput
@@ -131,7 +143,6 @@ function AddReview(props) {
                   ])
                 }
                 onRemoveItem={(i) => {
-                  console.log(i);
                   formObject["cast"].splice(i, 1);
                   onChangeFormObject("cast", formObject["cast"]);
                 }}
@@ -182,5 +193,8 @@ const styles = {
     width: 200,
     borderRadius: 10,
     marginLeft: 20,
+  },
+  uploadBtn: {
+    borderRadius: 5,
   },
 };

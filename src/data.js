@@ -5,7 +5,7 @@ import DrStrange from "./image/drstrange.jpg";
 const reviewData = [
   {
     id: 1,
-    image_path: Morbius,
+    poster: Morbius,
     date_of_review: "30 Mar 2022",
     screening_date: "26 Mar 2022",
     cast: [{ actor: "Jared Leto", character: "Dr Michael Morbius" }],
@@ -15,7 +15,7 @@ const reviewData = [
   },
   {
     id: 2,
-    image_path: TopGun,
+    poster: TopGun,
     date_of_review: "5 June 2022",
     screening_date: "27 May 2022",
     cast: [{ actor: "Tom Cruise", character: "Pet Maverick Mitchell" }],
@@ -25,7 +25,7 @@ const reviewData = [
   },
   {
     id: 3,
-    image_path: DrStrange,
+    poster: DrStrange,
     date_of_review: "13 May 2022",
     screening_date: "4 May 2022",
     cast: [
